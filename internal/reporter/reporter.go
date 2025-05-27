@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
-// Result of analyzing a single log
+// LogResult represents the result of analyzing a single log
 type LogResult struct {
 	LogID        string `json:"log_id"`
 	FilePath     string `json:"file_path"`
@@ -16,9 +17,9 @@ type LogResult struct {
 	ErrorDetails string `json:"error_details"`
 }
 
-// Exports results to a JSON file
+// ExportResults exports results to a JSON file with automatic directory creation
 func ExportResults(results []LogResult, outputPath string) error {
-	// Create directories if they don't exist
+	// Create directories if they don't exist (BONUS feature)
 	dir := filepath.Dir(outputPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
@@ -39,7 +40,7 @@ func ExportResults(results []LogResult, outputPath string) error {
 	return nil
 }
 
-// Prints results to console
+// PrintResults prints results to console with detailed formatting
 func PrintResults(results []LogResult) {
 	fmt.Println("\n=== Log Analysis Results ===")
 	for _, result := range results {
@@ -52,4 +53,18 @@ func PrintResults(results []LogResult) {
 		}
 		fmt.Println("---")
 	}
+}
+
+// GenerateTimestampedFilename generates a filename with current date (BONUS feature)
+func GenerateTimestampedFilename(basePath string) string {
+	now := time.Now()
+	timestamp := now.Format("060102") // YYMMDD format
+
+	dir := filepath.Dir(basePath)
+	ext := filepath.Ext(basePath)
+	name := filepath.Base(basePath)
+	nameWithoutExt := name[:len(name)-len(ext)]
+
+	timestampedName := fmt.Sprintf("%s_%s%s", timestamp, nameWithoutExt, ext)
+	return filepath.Join(dir, timestampedName)
 }

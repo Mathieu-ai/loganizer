@@ -1,8 +1,6 @@
 package analyzer
 
 import (
-	"errors"
-	"fmt"
 	"math/rand"
 	"os"
 	"sync"
@@ -12,37 +10,6 @@ import (
 	"loganizer/internal/reporter"
 )
 
-// FileNotFoundError represents a file that is not found error
-type FileNotFoundError struct {
-	Path string
-}
-
-func (e FileNotFoundError) Error() string {
-	return fmt.Sprintf("file not found: %s", e.Path)
-}
-
-// ParsingError represents the parsing error
-type ParsingError struct {
-	LogID   string
-	Message string
-}
-
-func (e ParsingError) Error() string {
-	return fmt.Sprintf("parsing error for log %s: %s", e.LogID, e.Message)
-}
-
-// IsFileNotFoundError checks if the error refers to FileNotFoundError
-func IsFileNotFoundError(err error) bool {
-	var fnfErr FileNotFoundError
-	return errors.As(err, &fnfErr)
-}
-
-// IsParsingError checks if the error refers to ParsingError
-func IsParsingError(err error) bool {
-	var parseErr ParsingError
-	return errors.As(parseErr, &parseErr)
-}
-
 func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, wg *sync.WaitGroup) {
 	defer wg.Done()
 
@@ -51,7 +18,7 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 		FilePath: logConfig.Path,
 	}
 
-	// Check if file exists
+	// Check if file exists and is readable
 	if _, err := os.Stat(logConfig.Path); err != nil {
 		if os.IsNotExist(err) {
 			fileErr := &FileNotFoundError{Path: logConfig.Path}
@@ -67,11 +34,11 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 		return
 	}
 
-	// Simulate analysis with random sleep
+	// Simulate analysis with random sleep (50-200ms as per README)
 	sleepDuration := time.Duration(50+rand.Intn(151)) * time.Millisecond
 	time.Sleep(sleepDuration)
 
-	// Simulate random parsing error
+	// Simulate random parsing error (10% chance as per README)
 	if rand.Float32() < 0.1 {
 		parseErr := &ParsingError{
 			LogID:   logConfig.ID,
@@ -89,12 +56,12 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 	results <- result
 }
 
-// analyzes multiple log files concurrently
+// AnalyzeLogs analyzes multiple log files concurrently
 func AnalyzeLogs(configs []config.LogConfig) []reporter.LogResult {
 	var wg sync.WaitGroup
 	results := make(chan reporter.LogResult, len(configs))
 
-	// goroutines for each log
+	// Launch goroutines for each log
 	for _, cfg := range configs {
 		wg.Add(1)
 		go AnalyzeLog(cfg, results, &wg)
