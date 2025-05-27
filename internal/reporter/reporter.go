@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// LogResult represents the result of analyzing a single log
+// Result of analyzing a single log
 type LogResult struct {
 	LogID        string `json:"log_id"`
 	FilePath     string `json:"file_path"`
@@ -16,7 +16,7 @@ type LogResult struct {
 	ErrorDetails string `json:"error_details"`
 }
 
-// ExportResults exports results to a JSON file
+// Exports results to a JSON file
 func ExportResults(results []LogResult, outputPath string) error {
 	// Create directories if they don't exist
 	dir := filepath.Dir(outputPath)
@@ -39,7 +39,7 @@ func ExportResults(results []LogResult, outputPath string) error {
 	return nil
 }
 
-// PrintResults prints results to console
+// Prints results to console
 func PrintResults(results []LogResult) {
 	fmt.Println("\n=== Log Analysis Results ===")
 	for _, result := range results {
