@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// LogResult represents the result of analyzing a single log
+// LogResult represents the analysis outcome for a single log file
 type LogResult struct {
 	LogID        string `json:"log_id"`
 	FilePath     string `json:"file_path"`
@@ -17,9 +17,16 @@ type LogResult struct {
 	ErrorDetails string `json:"error_details"`
 }
 
-// ExportResults exports results to a JSON file with automatic directory creation
+/**
+ * ExportResults serializes results to JSON file with directory auto-creation.
+ * Creates intermediate directories if they don't exist.
+ *
+ * @param results Slice of LogResult to export
+ * @param outputPath Path where the JSON file should be written
+ * @return Error if file creation or JSON encoding fails
+ */
 func ExportResults(results []LogResult, outputPath string) error {
-	// Create directories if they don't exist (BONUS feature)
+	// Ensure output directory exists
 	dir := filepath.Dir(outputPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
@@ -40,7 +47,12 @@ func ExportResults(results []LogResult, outputPath string) error {
 	return nil
 }
 
-// PrintResults prints results to console with detailed formatting
+/**
+ * PrintResults outputs formatted analysis results to stdout.
+ * Displays each result with ID, path, status, message, and error details.
+ *
+ * @param results Slice of LogResult to display
+ */
 func PrintResults(results []LogResult) {
 	fmt.Println("\n=== Log Analysis Results ===")
 	for _, result := range results {
@@ -55,7 +67,13 @@ func PrintResults(results []LogResult) {
 	}
 }
 
-// GenerateTimestampedFilename generates a filename with current date (BONUS feature)
+/**
+ * GenerateTimestampedFilename prepends YYMMDD timestamp to base filename.
+ * Preserves directory structure and file extension.
+ *
+ * @param basePath Original file path to timestamp
+ * @return New file path with timestamp prefix in YYMMDD format
+ */
 func GenerateTimestampedFilename(basePath string) string {
 	now := time.Now()
 	timestamp := now.Format("060102") // YYMMDD format

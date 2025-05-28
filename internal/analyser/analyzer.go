@@ -10,6 +10,15 @@ import (
 	"loganizer/internal/reporter"
 )
 
+/**
+ * AnalyzeLog processes a single log file and sends results through channel.
+ * Simulates file access validation and random parsing errors (10% probability).
+ * Sleep duration: 50-200ms to simulate I/O operations.
+ *
+ * @param logConfig The configuration for the log file to analyze
+ * @param results Channel to send analysis results to
+ * @param wg WaitGroup for synchronization
+ */
 func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, wg *sync.WaitGroup) {
 	defer wg.Done()
 
@@ -18,7 +27,7 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 		FilePath: logConfig.Path,
 	}
 
-	// Check if file exists and is readable
+	// Validate file accessibility
 	if _, err := os.Stat(logConfig.Path); err != nil {
 		if os.IsNotExist(err) {
 			fileErr := &FileNotFoundError{Path: logConfig.Path}
@@ -34,11 +43,11 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 		return
 	}
 
-	// Simulate analysis with random sleep (50-200ms as per README)
+	// Simulate I/O latency with random sleep (50-200ms)
 	sleepDuration := time.Duration(50+rand.Intn(151)) * time.Millisecond
 	time.Sleep(sleepDuration)
 
-	// Simulate random parsing error (10% chance as per README)
+	// Simulate parsing failure with 10% probability
 	if rand.Float32() < 0.1 {
 		parseErr := &ParsingError{
 			LogID:   logConfig.ID,
@@ -56,22 +65,28 @@ func AnalyzeLog(logConfig config.LogConfig, results chan<- reporter.LogResult, w
 	results <- result
 }
 
-// AnalyzeLogs analyzes multiple log files concurrently
+/**
+ * AnalyzeLogs orchestrates concurrent log analysis using goroutines and channels.
+ * Returns aggregated results from all worker goroutines.
+ *
+ * @param configs Slice of log configurations to analyze
+ * @return Slice of analysis results from all processed logs
+ */
 func AnalyzeLogs(configs []config.LogConfig) []reporter.LogResult {
 	var wg sync.WaitGroup
 	results := make(chan reporter.LogResult, len(configs))
 
-	// Launch goroutines for each log
+	// Spawn worker goroutines for concurrent processing
 	for _, cfg := range configs {
 		wg.Add(1)
 		go AnalyzeLog(cfg, results, &wg)
 	}
 
-	// Wait for all goroutines to complete
+	// Wait for all workers to complete
 	wg.Wait()
 	close(results)
 
-	// Collect results
+	// Aggregate results from channel
 	var logResults []reporter.LogResult
 	for result := range results {
 		logResults = append(logResults, result)

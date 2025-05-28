@@ -30,7 +30,7 @@ Supports filtering by status and timestamped output files.`,
 			os.Exit(1)
 		}
 
-		// Load configuration
+		// Load configuration from JSON
 		configs, err := config.LoadConfig(configPath)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
@@ -44,22 +44,22 @@ Supports filtering by status and timestamped output files.`,
 
 		fmt.Printf("Starting analysis of %d log files...\n", len(configs))
 
-		// Analyze logs using goroutines and channels
+		// Execute concurrent analysis with goroutines
 		results := analyzer.AnalyzeLogs(configs)
 
-		// Apply status filter if specified
+		// Apply status filtering if specified
 		if statusFilter != "" {
 			results = filterResultsByStatus(results, statusFilter)
 		}
 
-		// Print results to terminal
+		// Terminal output
 		reporter.PrintResults(results)
 
-		// Export to JSON if output path is provided
+		// JSON export with optional timestamping
 		if outputPath != "" {
 			finalOutputPath := outputPath
 
-			// Apply timestamp to filename if requested (BONUS feature)
+			// Apply timestamp prefix to filename
 			if useTimestamp {
 				finalOutputPath = reporter.GenerateTimestampedFilename(outputPath)
 			}
@@ -71,12 +71,18 @@ Supports filtering by status and timestamped output files.`,
 			fmt.Printf("\nResults exported to: %s\n", finalOutputPath)
 		}
 
-		// Print comprehensive summary
+		// Output analysis metrics
 		printSummary(results)
 	},
 }
 
-// filters results by status (BONUS feature)
+/**
+ * filterResultsByStatus filters LogResult slice by status field.
+ *
+ * @param results Slice of LogResult to filter
+ * @param status Status value to filter by ("OK" or "FAILED")
+ * @return Filtered slice containing only results with matching status
+ */
 func filterResultsByStatus(results []reporter.LogResult, status string) []reporter.LogResult {
 	var filtered []reporter.LogResult
 	for _, result := range results {
@@ -87,7 +93,12 @@ func filterResultsByStatus(results []reporter.LogResult, status string) []report
 	return filtered
 }
 
-// print a summary of the analysis
+/**
+ * printSummary outputs analysis metrics and failure details.
+ * Displays total count, success/failure breakdown, and detailed error information.
+ *
+ * @param results Slice of LogResult to summarize
+ */
 func printSummary(results []reporter.LogResult) {
 	successful := 0
 	failed := 0
@@ -115,6 +126,10 @@ func printSummary(results []reporter.LogResult) {
 	}
 }
 
+/**
+ * init registers the analyze command with flags.
+ * Sets up command-line flags for config path, output path, status filter, and timestamp options.
+ */
 func init() {
 	rootCmd.AddCommand(analyzeCmd)
 	analyzeCmd.Flags().StringVarP(&configPath, "config", "c", "", "Path to configuration JSON file (required)")

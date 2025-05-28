@@ -6,13 +6,20 @@ import (
 	"os"
 )
 
+// LogConfig represents a single log file configuration entry
 type LogConfig struct {
 	ID   string `json:"id"`
 	Path string `json:"path"`
 	Type string `json:"type"`
 }
 
-// loads log configurations from a JSON file
+/**
+ * LoadConfig deserializes JSON configuration file into LogConfig slice.
+ * Returns error if file access or JSON parsing fails.
+ *
+ * @param configPath Path to the JSON configuration file
+ * @return Slice of LogConfig and error if any
+ */
 func LoadConfig(configPath string) ([]LogConfig, error) {
 	file, err := os.Open(configPath)
 	if err != nil {
