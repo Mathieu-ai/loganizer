@@ -52,7 +52,7 @@ Supports filtering by status and timestamped output files.`,
 			results = filterResultsByStatus(results, statusFilter)
 		}
 
-		// Print results to console
+		// Print results to terminal
 		reporter.PrintResults(results)
 
 		// Export to JSON if output path is provided
