@@ -47,7 +47,7 @@ Supports filtering by status and timestamped output files.`,
 		// Analyze logs using goroutines and channels
 		results := analyzer.AnalyzeLogs(configs)
 
-		// Apply status filter if specified (BONUS feature)
+		// Apply status filter if specified
 		if statusFilter != "" {
 			results = filterResultsByStatus(results, statusFilter)
 		}
@@ -76,7 +76,7 @@ Supports filtering by status and timestamped output files.`,
 	},
 }
 
-// filterResultsByStatus filters results by status (BONUS feature)
+// filters results by status (BONUS feature)
 func filterResultsByStatus(results []reporter.LogResult, status string) []reporter.LogResult {
 	var filtered []reporter.LogResult
 	for _, result := range results {
@@ -87,7 +87,7 @@ func filterResultsByStatus(results []reporter.LogResult, status string) []report
 	return filtered
 }
 
-// printSummary prints a detailed summary of the analysis
+// prints a summary of the analysis
 func printSummary(results []reporter.LogResult) {
 	successful := 0
 	failed := 0
@@ -117,15 +117,9 @@ func printSummary(results []reporter.LogResult) {
 
 func init() {
 	rootCmd.AddCommand(analyzeCmd)
-
-	// Required flags
 	analyzeCmd.Flags().StringVarP(&configPath, "config", "c", "", "Path to configuration JSON file (required)")
 	analyzeCmd.MarkFlagRequired("config")
-
-	// Optional flags
 	analyzeCmd.Flags().StringVarP(&outputPath, "output", "o", "", "Path to output JSON file (optional)")
-
-	// BONUS flags
 	analyzeCmd.Flags().StringVar(&statusFilter, "status", "", "Filter results by status (OK or FAILED)")
 	analyzeCmd.Flags().BoolVar(&useTimestamp, "timestamp", false, "Add timestamp to output filename")
 }
