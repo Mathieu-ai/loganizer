@@ -87,7 +87,7 @@ func filterResultsByStatus(results []reporter.LogResult, status string) []report
 	return filtered
 }
 
-// prints a summary of the analysis
+// print a summary of the analysis
 func printSummary(results []reporter.LogResult) {
 	successful := 0
 	failed := 0
