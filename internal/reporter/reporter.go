@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -26,13 +27,18 @@ type LogResult struct {
  * @return Error if file creation or JSON encoding fails
  */
 func ExportResults(results []LogResult, outputPath string) error {
+	finalOutputPath := outputPath
+	if !strings.HasPrefix(filepath.ToSlash(outputPath), "reports/") && !strings.HasPrefix(filepath.ToSlash(outputPath), "reports\\") {
+		finalOutputPath = filepath.Join("reports", outputPath)
+	}
+
 	// Ensure output directory exists
-	dir := filepath.Dir(outputPath)
+	dir := filepath.Dir(finalOutputPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
-	file, err := os.Create(outputPath)
+	file, err := os.Create(finalOutputPath)
 	if err != nil {
 		return fmt.Errorf("failed to create output file: %w", err)
 	}
@@ -68,21 +74,21 @@ func PrintResults(results []LogResult) {
 }
 
 /**
- * GenerateTimestampedFilename prepends YYMMDD timestamp to base filename.
- * Preserves directory structure and file extension.
+ * GenerateTimestampedFilename creates a timestamped filename in reports/YYYY/ directory structure.
+ * Places the file in reports/[current_year]/ directory with YYMMDD timestamp prefix.
  *
  * @param basePath Original file path to timestamp
- * @return New file path with timestamp prefix in YYMMDD format
+ * @return New file path with timestamp prefix in reports/YYYY/YYMMDD_filename format
  */
 func GenerateTimestampedFilename(basePath string) string {
 	now := time.Now()
-	timestamp := now.Format("060102") // YYMMDD format
+	timestamp := now.Format("060102")
+	year := now.Format("2006")
 
-	dir := filepath.Dir(basePath)
 	ext := filepath.Ext(basePath)
 	name := filepath.Base(basePath)
 	nameWithoutExt := name[:len(name)-len(ext)]
 
 	timestampedName := fmt.Sprintf("%s_%s%s", timestamp, nameWithoutExt, ext)
-	return filepath.Join(dir, timestampedName)
+	return filepath.Join("reports", year, timestampedName)
 }
