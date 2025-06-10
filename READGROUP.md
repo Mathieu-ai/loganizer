@@ -118,17 +118,17 @@ loganalyzer analyze [flags]
 
 #### Required Flags
 
-| Flag | Short | Description | Example |
-|------|-------|-------------|---------|
-| `--config` | `-c` | Path to JSON configuration file | `--config config.json` |
+| Flag       | Short | Description                     | Example                |
+| ---------- | ----- | ------------------------------- | ---------------------- |
+| `--config` | `-c`  | Path to JSON configuration file | `--config config.json` |
 
 #### Optional Flags
 
-| Flag | Description | Default | Example |
-|------|-------------|---------|---------|
-| `--output` | `-o` | Export results to JSON file | None | `--output report.json` |
-| `--status` | Filter results by status (OK/FAILED) | None | `--status FAILED` |
-| `--timestamp` | Add timestamp to output filename | false | `--timestamp` |
+| Flag          | Description                          | Default                     | Example           |
+| ------------- | ------------------------------------ | --------------------------- | ----------------- | ---------------------- |
+| `--output`    | `-o`                                 | Export results to JSON file | None              | `--output report.json` |
+| `--status`    | Filter results by status (OK/FAILED) | None                        | `--status FAILED` |
+| `--timestamp` | Add timestamp to output filename     | false                       | `--timestamp`     |
 
 #### Examples
 
@@ -187,16 +187,16 @@ The configuration file must be a valid JSON array containing log configuration o
 
 #### Configuration Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier for the log |
-| `path` | string | ✅ | File path (absolute or relative) |
-| `type` | string | ✅ | Log type classification |
+| Field  | Type   | Required | Description                      |
+| ------ | ------ | -------- | -------------------------------- |
+| `id`   | string | ✅       | Unique identifier for the log    |
+| `path` | string | ✅       | File path (absolute or relative) |
+| `type` | string | ✅       | Log type classification          |
 
 #### Supported Log Types
 
 - `nginx-access` - Nginx access logs
-- `mysql-error` - MySQL error logs  
+- `mysql-error` - MySQL error logs
 - `custom-app` - Custom application logs
 - `generic` - Generic log format
 
@@ -213,7 +213,7 @@ The configuration file must be a valid JSON array containing log configuration o
   },
   {
     "id": "database",
-    "path": "/var/log/mysql/error.log", 
+    "path": "/var/log/mysql/error.log",
     "type": "mysql-error"
   }
 ]
@@ -376,7 +376,7 @@ The application implements robust error handling with custom error types:
 - **Message**: "Fichier introuvable."
 - **Details**: Full system error message
 
-#### ParsingError  
+#### ParsingError
 
 - **Trigger**: Simulated parsing failures (10% random chance)
 - **Message**: "Erreur de parsing."
@@ -391,7 +391,7 @@ if analyzer.IsFileNotFoundError(err) {
 }
 
 if analyzer.IsParsingError(err) {
-    // Handle parsing error  
+    // Handle parsing error
 }
 
 // Extract error details
@@ -407,7 +407,7 @@ if fnfErr, ok := analyzer.GetFileNotFoundError(err); ok {
 ### Concurrency Model
 
 - **Goroutines**: One per log file for parallel processing
-- **WaitGroup**: Synchronization of concurrent operations  
+- **WaitGroup**: Synchronization of concurrent operations
 - **Channels**: Safe result collection from goroutines
 - **Timing**: Random analysis duration (50-200ms) for realistic simulation
 
@@ -425,10 +425,12 @@ if fnfErr, ok := analyzer.GetFileNotFoundError(err); ok {
 ### ✅ Implemented Bonus Features
 
 1. **📁 Automatic Directory Creation**
+
    - Creates output directories automatically
    - Uses `os.MkdirAll()` for nested paths
 
 2. **🕒 Timestamped Output Files**
+
    - `--timestamp` flag adds YYMMDD prefix
    - Format: `250127_report.json`
 
@@ -464,6 +466,15 @@ go test ./...
 # Build and test
 go build -o loganalyzer main.go
 ./loganalyzer analyze --config config.json
+```
+
+### Tests
+
+```bash
+
+# Run tests
+go test ./internal/analyser -v
+
 ```
 
 ---
