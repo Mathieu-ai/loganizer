@@ -9,7 +9,7 @@ A powerful command-line tool for analyzing log files from multiple sources in pa
 ## 👥 Development Team
 
 - **Mathieu** - Lead Developer & Project Architect
-- **Yoann** - the junior core Developer 
+- **Yoann** - the junior core Developer
 - **Swann** - Core Developer
 
 ---
@@ -69,6 +69,7 @@ go install
 ## ⚡ Quick Start
 
 1. **Create a configuration file** (`config.json`):
+
 ```json
 [
   {
@@ -85,6 +86,7 @@ go install
 ```
 
 2. **Run the analysis**:
+
 ```bash
 ./loganalyzer analyze --config config.json --output results.json
 ```
@@ -109,6 +111,7 @@ loganalyzer
 Analyze log files based on configuration with concurrent processing.
 
 #### Syntax
+
 ```bash
 loganalyzer analyze [flags]
 ```
@@ -130,27 +133,32 @@ loganalyzer analyze [flags]
 #### Examples
 
 **Basic Analysis:**
+
 ```bash
 ./loganalyzer analyze --config config.json
 ```
 
 **Analysis with JSON Export:**
+
 ```bash
 ./loganalyzer analyze --config config.json --output reports/analysis.json
 ```
 
 **Filter Failed Logs Only:**
+
 ```bash
 ./loganalyzer analyze --config config.json --status FAILED
 ```
 
 **Timestamped Output:**
+
 ```bash
 ./loganalyzer analyze --config config.json --output report.json --timestamp
 # Creates: 250127_report.json (for January 27, 2025)
 ```
 
 **Complete Example with All Features:**
+
 ```bash
 ./loganalyzer analyze \
   --config config.json \
@@ -195,6 +203,7 @@ The configuration file must be a valid JSON array containing log configuration o
 ### Sample Configuration Files
 
 **Basic Configuration:**
+
 ```json
 [
   {
@@ -211,6 +220,7 @@ The configuration file must be a valid JSON array containing log configuration o
 ```
 
 **Development Configuration:**
+
 ```json
 [
   {
@@ -361,11 +371,13 @@ loganizer/
 The application implements robust error handling with custom error types:
 
 #### FileNotFoundError
+
 - **Trigger**: When log files don't exist or are inaccessible
 - **Message**: "Fichier introuvable."
 - **Details**: Full system error message
 
 #### ParsingError  
+
 - **Trigger**: Simulated parsing failures (10% random chance)
 - **Message**: "Erreur de parsing."
 - **Details**: Specific parsing error information
