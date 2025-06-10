@@ -349,7 +349,9 @@ loganizer/
 ├── internal/              # Internal packages
 │   ├── analyser/          # Core analysis logic
 │   │   ├── analyzer.go    # Main analyzer with goroutines
-│   │   └── errors.go      # Custom error types
+│   │   ├── errors.go      # Custom error types
+│   │   └── errors_test.go # Custom error types
+
 │   ├── config/            # Configuration management
 │   │   └── config.go      # JSON config loading
 │   └── reporter/          # Result reporting
